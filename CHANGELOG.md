@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- **`meshy-image-prompt`**: the `ai_model` and `pose_mode` advice is now based on live tests of six more Text to Image models (2026-10-16, one sample per model): nano-banana, nano-banana-2, nano-banana-2-lite, gpt-image-2, gpt-image-2-5-flare and gpt-image-2-5-sunburst. Before, it was based on the docs and pricing alone. `pose_mode: "a-pose"` gave a rig-ready A-pose for every model requested, and mesh-only Image to 3D kept the arms clear on all five meshes. The GPT Image models followed the image formula most closely, so they now lead the final-image list; the 3-credit models drifted on the helmet prompt. A posed `nano-banana` request ran on `nano-banana-pro` but was billed 3 credits. The `ai_model` row lists what is still untested. The new section in `references/evidence.md` has the per-model results and task ids.
+
 ## [0.1.0] - 2026-10-14
 
 First release: four prompt-writing skills distilled from the "Meshy Prompt Formulas" tests (live A/B runs on 2026-10-07, Meshy Edit runs on 2026-10-14).
