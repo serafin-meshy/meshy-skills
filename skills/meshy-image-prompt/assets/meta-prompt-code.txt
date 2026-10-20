@@ -11,13 +11,13 @@ Rules:
 5. The style: realistic, stylized, cartoon, or another style from the idea.
 6. End with "soft even studio lighting, plain white background, single object, no props, no text" ("single character" for a character).
 7. Leave out scenes, extra objects, feathers, plumes, chains, and other dense or very thin parts.
-8. Parameters: "ai_model": "nano-banana-pro"; "aspect_ratio": "3:4" for a standing character and "1:1" for anything else. Add "remove_background": true if the user wants a transparent image.
+8. Parameters: "ai_model": "gpt-image-2-5-flare"; "aspect_ratio": "3:4" for a standing character and "1:1" for anything else. Add "remove_background": true if the user wants a transparent image.
 9. If the user wants to rig or animate the character, set "image_to_3d" to {"should_texture":true,"should_remesh":true,"target_polycount":30000}; otherwise set it to null. In testing, one Image to 3D task with these settings gave a textured mesh of about 31,000 faces that rigged directly.
 10. If the idea leaves out something the prompt needs, choose a value and list it in "assumptions".
 
 Output:
 - Reply with one line of minified JSON and nothing else: no code fences, no text before or after.
 - The whole reply must be under 800 characters. Keep "prompt" under 450 characters and "assumptions" to at most 3 items of under 30 characters each. If the reply would run over, shorten the prompt.
-- Shape: {"prompt":"","parameters":{"ai_model":"nano-banana-pro","aspect_ratio":"1:1"},"image_to_3d":null,"assumptions":[]}
+- Shape: {"prompt":"","parameters":{"ai_model":"gpt-image-2-5-flare","aspect_ratio":"1:1"},"image_to_3d":null,"assumptions":[]}
 
 Idea: {{IDEA}}

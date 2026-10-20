@@ -11,13 +11,13 @@ metadata:
 
 Image to 3D reconstructs what the picture shows and invents the rest, so a good input image shows the whole object, from an angle that exposes the most surface, lit evenly, alone on a plain background. The Text to Image prompt describes that picture. This is also the only route that gives a standard A-pose for rigging: Text to 3D did not produce one in 18 tries, while Text to Image with `pose_mode` followed by Image to 3D did in 3 of 3.
 
-The rules below come from live runs on 2026-10-07 with `nano-banana-pro` for images and `ai_model: "latest"` (Meshy 7.1) for 3D. The formula and `pose_mode` were rechecked on six more image models on 2026-10-16 (see the `ai_model` row). [references/evidence.md](references/evidence.md) has the runs and task ids; [references/rig-ready-characters.md](references/rig-ready-characters.md) has the full rigging pipeline with costs.
+The rules below come from live runs on 2026-10-07 with `nano-banana-pro` for images and `ai_model: "latest"` (Meshy 7.1) for 3D. The formula and `pose_mode` were rechecked on six more image models on 2026-10-16 (see the `ai_model` row). [references/evidence.md](references/evidence.md) has the runs; [references/rig-ready-characters.md](references/rig-ready-characters.md) has the full rigging pipeline with costs.
 
 ## Workflow
 
 1. **Decide what the image is for.** Feeding Image to 3D (this skill), or a final 2D image (drop the view, background and single-object slots and write composition, camera and lighting mood instead). For a character the user will rig or animate, follow the rig-ready pipeline in step 5.
 2. **Write the prompt with the formula.** Subject first, then pose only when it is not set by `pose_mode`, then framing, materials and colors per part, style, and the fixed closing phrase.
-3. **Set the parameters** from the table below. Never set `pose_mode` and describe a different pose in the same request.
+3. **Set the parameters** from the table below. Never set `pose_mode` and describe a different pose in the same request. Default to `gpt-image-2-5-flare`, which works on every Meshy plan; suggest `nano-banana-pro` only when the user says they have a Pro plan or above.
 4. **Check it.** Run `python3 scripts/check_prompt.py --kind image [--pose-mode a-pose] "…"` (path relative to this skill's directory). It flags missing framing, lighting or background phrases, thin or dense parts, pose words that conflict with `pose_mode`, and length.
 5. **Say what happens next.** For a rig-ready character: Image to 3D with `should_texture: true`, `should_remesh: true`, `target_polycount: 30000`, then Rigging with that task id. For anything else: Image to 3D (textured or mesh-only as the user needs), no remesh settings unless asked.
 6. **Deliver prompt, parameters, next step and assumptions** in the output format at the end.
@@ -45,8 +45,8 @@ Tested examples:
 
 | Parameter | Use | Notes |
 |---|---|---|
-| `ai_model` | `gpt-image-2-5-flare`, `gpt-image-2`, `gpt-image-2-5-sunburst` or `nano-banana-pro` (9 credits) for the final image; `nano-banana-2` (6), `nano-banana-2-lite` or `nano-banana` (3) for drafts | Tested on 2026-10-16 with the two example prompts above, one sample per model. The three GPT Image models followed the formula best: pure white background, little or no shadow, every requested material, nothing added. `nano-banana-pro` and `nano-banana-2` passed, but with light grey backgrounds and soft shadows. `nano-banana` missed two requested details, and `nano-banana-2-lite` added a chainmail neck guard draped onto the floor. Untested: `nano-banana-2-1`, `t-pose`, and Image to Image, multi-view or rigging on any model except `nano-banana-pro`. `nano-banana-pro` and `pose_mode` need a Pro plan or above. |
-| `pose_mode: "a-pose"` or `"t-pose"` | Characters you will rig | Leave pose words out of the prompt. `"a-pose"` gave a clean A-pose with the hands clear for every model requested, and mesh-only Image to 3D kept the arms clear of the torso on every one tested (2026-10-16, one sample each). On the nano-banana models it fixes the aspect ratio to 3:4 and ignores `aspect_ratio`. A posed `nano-banana` request reported `nano-banana-pro` as the model and was billed 3 credits. GPT Image models keep the requested model; with no `aspect_ratio` set they returned square images. |
+| `ai_model` | `gpt-image-2-5-flare`, `gpt-image-2`, `gpt-image-2-5-sunburst` or `nano-banana-pro` (9 credits) for the final image; `nano-banana-2` (6), `nano-banana-2-lite` or `nano-banana` (3) for drafts | Tested on 2026-10-16 with the two example prompts above, one sample per model. The three GPT Image models followed the formula best: pure white background, little or no shadow, every requested material, nothing added. `nano-banana-pro` and `nano-banana-2` passed, but with light grey backgrounds and soft shadows. `nano-banana` missed two requested details, and `nano-banana-2-lite` added a chainmail neck guard draped onto the floor. Untested: `nano-banana-2-1`, `t-pose`, and Image to Image, multi-view or rigging on any model except `nano-banana-pro`. `nano-banana-pro` needs a Pro plan or above; the GPT Image models and the other nano-banana models do not. |
+| `pose_mode: "a-pose"` or `"t-pose"` | Characters you will rig | Leave pose words out of the prompt. `"a-pose"` gave a clean A-pose with the hands clear for every model requested, and mesh-only Image to 3D kept the arms clear of the torso on every one tested (2026-10-16, one sample each). On the nano-banana models it fixes the aspect ratio to 3:4 and ignores `aspect_ratio`. A posed `nano-banana` request is generated by `nano-banana-pro`, so it needs a Pro plan; `nano-banana-2`, `nano-banana-2-lite` and the GPT Image models keep the requested model and work on any plan. GPT Image models with no `aspect_ratio` set returned square images, so send `"3:4"` for a standing character. |
 | `aspect_ratio` | `"3:4"` for a standing character, `"1:1"` for anything else | Cannot be combined with `generate_multi_view`. |
 | `remove_background: true` | Returns a transparent PNG | Only when the user asks; the plain white background in the prompt already converts cleanly. |
 | `generate_multi_view: true` | Three cropped views for Multi-Image to 3D | Same 9 credits as one image, 66 to 97 s instead of 24. See the multi-view finding below before choosing it. |
@@ -57,7 +57,7 @@ For Image to Image (cleaning up a user's photo, or making multi-views from a sin
 
 For A-pose or T-pose use `pose_mode` and leave pose words out; for any other pose write it in the prompt and leave `pose_mode` unset; never let the two disagree.
 
-- The parameter and the prompt gave equally clean A-poses (arms about 45 degrees from the body, hands clear). The parameter's advantage is length: it leaves the 800 characters for the character.
+- The parameter and the prompt gave equally clean A-poses (arms about 45 degrees from the body, hands clear), and both rigged with no forearm or hand weighted to the torso. The parameter's advantage is length: it leaves the 800 characters for the character. The tested A-pose wording, for when `pose_mode` is not used: "standing in an A-pose, arms straight and angled down about 45 degrees away from the body, hands open and clear of the body, legs slightly apart, facing forward".
 - Using both added nothing and drifted the style (photoreal, smaller in frame, a floor shadow).
 - A conflict, `pose_mode: "a-pose"` with "sitting on a stool" in the prompt, produced a blend: A-pose arms, straight legs and a stool between the legs.
 - Statues, figurines and 3D prints in a specific pose: describe it body part by body part, body position, then arms, then hands, then head. "Kneeling on one knee, left hand on the knee, right hand holding a staff upright, head turned slightly left" works; "heroic pose" does not.
@@ -65,7 +65,7 @@ For A-pose or T-pose use `pose_mode` and leave pose words out; for any other pos
 
 ## Rig-ready characters in three calls
 
-1. Text to Image with `pose_mode: "a-pose"`, `ai_model: "nano-banana-pro"`: 9 credits.
+1. Text to Image with `pose_mode: "a-pose"`, `aspect_ratio: "3:4"` and `ai_model: "gpt-image-2-5-flare"` (any plan) or `"nano-banana-pro"` (Pro plan or above): 9 credits. The full three-call pipeline was tested with `nano-banana-pro`; the `gpt-image-2-5-flare` A-pose image converted with the arms clear of the torso but was not rigged in testing.
 2. Image to 3D with `should_texture: true`, `should_remesh: true`, `target_polycount: 30000`: 30 credits. The tested run came out at 30,912 faces, textured from the image. Without remesh, Image to 3D meshes came out at 632,000 to 1.37 million faces, over the 300,000 rigging limit.
 3. Rigging with that task id as `input_task_id`: 5 credits. Includes walking and running animations.
 
@@ -85,7 +85,7 @@ Multi-view output is three cropped transparent PNGs (about 340 to 450 by 610 to 
 
 ```
 Prompt: <the image prompt, under 800 characters>
-Parameters: {"ai_model":"nano-banana-pro","aspect_ratio":"1:1"}   plus pose_mode / remove_background / generate_multi_view when they apply
+Parameters: {"ai_model":"gpt-image-2-5-flare","aspect_ratio":"1:1"}   plus pose_mode / remove_background / generate_multi_view when they apply
 Next step: Image to 3D   or   Image to 3D with should_texture, should_remesh and target_polycount 30000, then Rigging
 Assumptions: <values you chose that the idea did not give>
 ```

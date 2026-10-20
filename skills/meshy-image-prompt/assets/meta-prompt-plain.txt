@@ -11,7 +11,7 @@ Rules:
 5. The style: realistic, stylized, cartoon, or another style from the idea.
 6. End with "soft even studio lighting, plain white background, single object, no props, no text" ("single character" for a character).
 7. Leave out scenes, extra objects, feathers, plumes, chains, and other dense or very thin parts.
-8. Settings: model nano-banana-pro; aspect ratio 3:4 for a standing character and 1:1 for anything else. Turn background removal on only if the idea asks for a transparent image; otherwise leave it off.
+8. Settings: model gpt-image-2-5-flare; aspect ratio 3:4 for a standing character and 1:1 for anything else. Turn background removal on only if the idea asks for a transparent image; otherwise leave it off.
 9. If the user wants to rig or animate the character, write on the Next step line: "Image to 3D with texture on, remesh on and a target of 30,000 faces, then rig the result." For anything else, write "Image to 3D" on the Next step line, with no remesh or face-count settings.
 10. Keep the prompt under 800 characters.
 11. If the idea leaves out something the prompt needs, choose a value and put it on the Assumptions line.

@@ -6,11 +6,13 @@ A rig-ready character takes three API calls: an A-pose image, one textured Image
 
 | Step | Request | Credits | Tested result |
 |---|---|---|---|
-| 1. Text to Image | `{"ai_model":"nano-banana-pro","pose_mode":"a-pose","prompt":"<formula prompt, no pose words>"}` | 9 | Clean A-pose image (pose-test arm A, task `01a11769-ab82-737e-9287-10dc069ff5f8`) |
-| 2. Image to 3D | `{"image_url":"<step 1 image>","should_texture":true,"should_remesh":true,"target_polycount":30000}` | 30 | 30,912 faces, textured from the image (task `01a117f7-15ed-71b9-8c37-f6d95043ea6d`) |
-| 3. Rigging | `{"input_task_id":"<step 2 task>"}` | 5 | Standard A-pose, 24 joints, no forearm or hand weighted to the torso; walking and running animations included (task `01a117f8-5dca-71b0-b873-c39c7831386f`) |
+| 1. Text to Image | `{"ai_model":"nano-banana-pro","pose_mode":"a-pose","prompt":"<formula prompt, no pose words>"}` | 9 | Clean A-pose image (pose-test arm A) |
+| 2. Image to 3D | `{"image_url":"<step 1 image>","should_texture":true,"should_remesh":true,"target_polycount":30000}` | 30 | 30,912 faces, textured from the image |
+| 3. Rigging | `{"input_task_id":"<step 2 task>"}` | 5 | Standard A-pose, 24 joints, no forearm or hand weighted to the torso; walking and running animations included |
 
-`input_task_id` on Image to 3D can replace `image_url` when the image came from a Meshy Text to Image task. Folder `i3d-remesh-20261007_140350/`.
+`input_task_id` on Image to 3D can replace `image_url` when the image came from a Meshy Text to Image task.
+
+`nano-banana-pro` needs a Pro plan or above. On any plan, use `"ai_model":"gpt-image-2-5-flare"` with `"aspect_ratio":"3:4"` for step 1 at the same 9 credits: in the 2026-10-16 model comparison its `pose_mode` image was a clean A-pose and mesh-only Image to 3D kept the arms clear of the torso. That image was not taken through steps 2 and 3, which do not depend on the image model.
 
 ## The longer route (49 credits) also works
 
