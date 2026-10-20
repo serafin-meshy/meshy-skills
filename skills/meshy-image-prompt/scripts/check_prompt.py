@@ -50,6 +50,11 @@ THIN_DENSE = (
     "feather feathers plume plumes chain chains wire wires string strings lattice "
     "scaffolding cables netting mesh-like"
 ).split()
+GROUND = [
+    "foundation", "flower box", "flower boxes", "garden", "lawn", "yard", "fence",
+    "path", "pathway", "ground", "terrain", "grass", "bushes", "hedge",
+]
+LOOK_STYLES = ["cartoon", "cartoonish", "toy", "toy-like"]
 SHAPE_CHANGE = [
     "taller", "shorter", "wider", "thicker", "thinner", "bigger", "larger", "smaller",
     "longer", "add a", "add an", "remove the", "remove a", "reshape", "elongate",
@@ -140,6 +145,14 @@ def check_preview(text: str, r: Report) -> None:
     if hits := found(text, THIN_DENSE):
         r.warn(f"thin or dense parts ({', '.join(hits)}) are a common cause of failed generations; "
                "replace with solid shapes or leave out")
+    if hits := found(text, GROUND):
+        r.warn(f"ground-level details ({', '.join(hits)}): on a cottage they came with an added ring "
+               "of bushes and rocks; leave them out unless the base is part of the asset")
+    if hits := found(text, LOOK_STYLES):
+        r.note(f"style words ({', '.join(hits)}): 'cartoon delivery van' gave a realistic van in 3 of 3 "
+               "previews; if the look depends on the style, use the image route")
+    if re.search(r"\bwindow panels?\b", low):
+        r.note("'window panels' gave solid panels; write 'window openings' if they should be holes")
     details = [p for p in re.split(r"[,;]", text) if p.strip()]
     if len(details) > 9:
         r.warn(f"about {len(details)} comma-separated details; the preview dropped details "
@@ -181,6 +194,9 @@ def check_image(text: str, r: Report, pose_mode: str | None) -> None:
                    "and drifted the style in testing; drop the words")
     elif at_words:
         r.note("A/T-pose written in words works, but pose_mode is shorter and leaves room for the subject")
+    if "glass" in low and not found(text, ["frosted", "tinted", "stained", "opaque", "milky"]):
+        r.note("Image to 3D makes no transparent material: clear glass panes came out as an open frame, "
+               "a clear dome as opaque white; write 'frosted glass' if the panes should be there")
     if hits := found(text, ["transparent background"]):
         r.note("for a transparent image set remove_background: true rather than asking in the prompt")
 

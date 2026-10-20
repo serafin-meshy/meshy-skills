@@ -10,9 +10,9 @@ Rules:
 4. Materials and colors, part by part, for the main parts.
 5. The style: realistic, stylized, cartoon, or another style from the idea.
 6. End with "soft even studio lighting, plain white background, single object, no props, no text" ("single character" for a character).
-7. Leave out scenes, extra objects, feathers, plumes, chains, and other dense or very thin parts.
-8. Settings: model gpt-image-2-5-flare; aspect ratio 3:4 for a standing character and 1:1 for anything else. Turn background removal on only if the idea asks for a transparent image; otherwise leave it off.
-9. If the user wants to rig or animate the character, write on the Next step line: "Image to 3D with texture on, remesh on and a target of 30,000 faces, then rig the result." For anything else, write "Image to 3D" on the Next step line, with no remesh or face-count settings.
+7. If the idea is a scene or a group, choose the main object, describe only it and put that choice on the Assumptions line; for a building, also leave out the ground around it (garden, fence, path). Leave out extra objects and dense clusters of thin parts: feathers, plumes, fur, chains, netting. Thin parts that hold the object together, such as chair spindles, a handle or a roof rack, converted fine. Describe glass as frosted or tinted: clear glass came out as an open frame with no panes.
+8. Settings: model gpt-image-2-5-flare; aspect ratio 3:4 for a standing character, 4:3 for a wide object such as a vehicle or a bench, and 1:1 for anything else. Turn background removal on only if the idea asks for a transparent image; otherwise leave it off.
+9. If the user wants to rig or animate the character, write on the Next step line: "Image to 3D with texture on, remesh on and a target of 30,000 faces, then rig the result." If the model is for a game engine, a web viewer or AR, write "Image to 3D with texture on, remesh on and a target of 30,000 faces." For anything else, write "Image to 3D" on the Next step line, with no remesh or face-count settings.
 10. Keep the prompt under 800 characters.
 11. If the idea leaves out something the prompt needs, choose a value and put it on the Assumptions line.
 

@@ -11,14 +11,14 @@ metadata:
 
 The Text to 3D preview makes an untextured mesh, so its prompt describes shape and nothing else. Colors, materials and surface damage go into the refine step's `texture_prompt`; pose and face count go into parameters. The field is `prompt`, maximum 800 characters, and Meshy's prompting guide says the earliest words carry the most weight, so the subject comes first.
 
-The rules below were tested live on 2026-10-07 against `ai_model: "latest"` (Meshy 7.1), one or a few samples per comparison. [references/evidence.md](references/evidence.md) has the runs and what each one showed.
+The rules below were tested live against `ai_model: "latest"` (Meshy 7.1): characters and a helmet on 2026-10-07, six more props on 2026-10-20, one or a few samples per comparison. [references/evidence.md](references/evidence.md) has the runs and what each one showed.
 
 ## Workflow
 
-1. **Pick the route first.** If the user wants to rig or animate a character, do not write a preview prompt: send them to the image route (`meshy-image-prompt`). In 18 character previews Text to 3D never produced a standard A-pose. `pose_mode: "a-pose"` gives an arms-out, palms-up pose in 11 of 11 runs; it rigs, but the hands face the wrong way in the walk animation. Props, statues, printable figures and anything that will not be animated stay on Text to 3D.
+1. **Pick the route first.** If the user wants to rig or animate a character, do not write a preview prompt: send them to the image route (`meshy-image-prompt`). In 18 character previews Text to 3D never produced a standard A-pose. `pose_mode: "a-pose"` gives an arms-out, palms-up pose in 11 of 11 runs; it rigs, but the hands face the wrong way in the walk animation. Statues, printable figures and other things that will not be animated stay on Text to 3D. For props, both routes work, so choose by what the prop needs (see "Props" below). If its look depends on a style such as cartoon, on a number of parts, or on particular proportions, suggest the image route. In a six-prop test, Text to 3D got each object's type and main parts but dropped those words, while the image route kept them every time.
 2. **Sort the idea into three piles.** Shape words go in the prompt. Colors, materials and damage go in a "texture ideas" note for the refine (`meshy-texture-prompt`). Pose, face budget and topology go in parameters (table below).
 3. **Write the prompt with the formula**, then read it once as the model will: subject first, largest forms before small ones, at most about eight shape details.
-4. **Check it.** Run `python3 scripts/check_prompt.py --kind preview "…"` (path relative to this skill's directory). It flags length, material and color words, damage words, pose words, "low-poly", and a missing closing phrase. Fix what it reports.
+4. **Check it.** Run `python3 scripts/check_prompt.py --kind preview "…"` (path relative to this skill's directory). It flags length, material and color words, damage words, pose words, "low-poly", ground-level details on a building, cartoon or toy style words, "window panels", and a missing closing phrase. Fix what it reports.
 5. **Deliver prompt, parameters, texture ideas and assumptions** in the output format at the end. State which values you chose that the idea did not give.
 
 ## The formula
@@ -39,6 +39,7 @@ The rules below were tested live on 2026-10-07 against `ai_model: "latest"` (Mes
 Tested examples:
 
 - Prop: `A medieval knight's helmet, tall rounded dome with a narrow horizontal eye slit and a pointed hinged visor, riveted cheek guards, raised ridge along the top from front to back, small breathing holes on the visor, realistic proportions, single standalone object`
+- Prop: `A medieval longsword, long straight double-edged blade tapering to a point, shallow groove down the center of the blade, wide straight crossguard, long wrapped grip, round disc pommel, realistic proportions, single standalone object` (every part followed, 47,142 faces)
 - Character (for a statue or print, not for rigging): `A stocky dwarf blacksmith, short broad body with an oversized head and large hands, thick braided beard reaching the belt, knee-length apron split between the legs over a belted tunic, rolled sleeves, heavy boots, stylized proportions, single standalone character`
 
 The bare prompt "a knight's helmet" produced an ornate fantasy helmet with scrollwork and a crest that nobody asked for. The formula prompt produced the dome, eye slit, pointed visor, ridge, rivets and breathing slots. A short prompt is an invitation for the model to design; a formula prompt is a specification.
@@ -52,15 +53,31 @@ The bare prompt "a knight's helmet" produced an ornate fantasy helmet with scrol
 - **Scenes, groups, dense repeats and thin parts.** Describe one object. Lattices, scaffolding, piles of small items, wires, strings, feathers and plumes are the common causes of failed generations in Meshy's error documentation. Pick the main object of a scene and say so in the assumptions.
 - **Lighting, background, text and logos.** They mean nothing to a mesh generator.
 - **Long detail lists.** The preview dropped details from longer lists (the hinge on the visor, the oversized head, the rolled sleeves) and invented others (belt pouches, fur boot cuffs). About eight shape details is the practical ceiling; put the ones that matter most earliest.
+- **Ground around a building.** "Low raised foundation" and "flower box under one window" on a cottage came with a ring of bushes and rocks around the base; without them, the walls ended on a flat base. Leave out foundations, paths, plants and ground unless the base is part of the asset.
 
 Two wording findings worth knowing: "thick braided beard reaching the belt" became a rope-like braid around the neck in one run and a plain long beard in another, so a detail that depends on reading two words together ("braided" + "beard") is at risk; and "knee-length apron split between the legs" became a bib over trousers, which happens to be good for rigging, so for characters prefer clothing that ends above the knee or splits between the legs.
+
+## Props
+
+Six props were tested on 2026-10-20: a lantern, a chair, a longsword, a potted plant, a cottage and a cartoon van. Each got one formula preview, and some got follow-up variants. The runs are in [references/evidence.md](references/evidence.md).
+
+- **What held:** the type of object and its main parts, on every prop. Against a two-to-four-word bare prompt, the formula gave the requested kind of object in 3 of 3: a square Victorian lantern instead of a round hurricane lantern, and a spindle-back chair instead of a tub armchair.
+- **What the preview dropped:**
+  - A style that sets the whole look. "Cartoon delivery van" gave a realistic panel van in 3 of 3, even with "toy-like" and "exaggerated chunky proportions" right after the subject.
+  - Proportions and counts: "oversized rounded cab", "squat fuel tank", "five vertical spindles" (it made four wide slats), and "round chimney" (square in 2 of 2).
+  - The size of a thin part: "large round loop handle arching over the top" became a small hook.
+
+  When these matter, use the image route (`meshy-image-prompt`). The design shows up in a 9-credit image and can be fixed before any 3D is paid for.
+- **Openings:** "window panels" gave solid panels; "window openings" cut through them. If a part should be a hole, call it an opening.
+- **Parts that sit on top of each other:** listing them bottom to top ("fuel tank as the base, square body above it") got rid of a pedestal the first wording produced, but the tank still came out as a flat square plinth, not a cylinder. The order fixed where the parts went, not their shapes.
+- **Face counts:** raw prop previews ran from 47,142 faces (sword) to 2,174,244 (cottage, a 52 MB GLB), and 8 of the 10 formula previews were over 300,000. For a game engine, a web viewer or AR, set `should_remesh: true` and a `target_polycount` (next section).
 
 ## Set these with parameters, not words
 
 | Want | Parameter | Notes |
 |---|---|---|
 | A-pose or T-pose | `pose_mode: "a-pose"` or `"t-pose"` | Applied consistently, but on Text to 3D the result is arms-out, palms-up, not a standard A-pose. Rig-ready characters take the image route. |
-| A face budget on a standard model | `should_remesh: true`, `target_polycount: N` (100 to 300,000, default 30,000) | Default `should_remesh` is false on Meshy 6 and 7, which leaves previews at 368,000 to 2.3 million faces, above the rigging limit of 300,000. A preview at 30,000 kept its count through refine and rigged directly. |
+| A face budget on a standard model, or a prop for a game engine, web viewer or AR | `should_remesh: true`, `target_polycount: N` (100 to 300,000, default 30,000) | Default `should_remesh` is false on Meshy 6 and 7, which left character previews at 368,000 to 2.3 million faces (above the rigging limit of 300,000) and prop previews at 47,000 to 2.2 million. A preview at 30,000 kept its count through refine and rigged directly. |
 | Clean game-ready topology at a set count | `model_type: "smart-topology"`, `ai_model: "meshy-t2"`, `target_polycount: N` (100 to 15,000, default 4,000) | A different generator, not a cleanup pass: softer detail, separate open parts. 5 credits instead of 20. Only when the user asks for low-poly, game-ready topology or gives a face budget; "for a game" alone is not a request for it. |
 | Quad topology | `topology: "quad"` with `should_remesh: true` | Not available with `meshy-t2`. |
 | Metal that reads as metal | `enable_pbr: true` on the refine | A refine setting, but decide it now so the texture prompt can rely on it. |
@@ -76,7 +93,7 @@ Prompt: <the preview prompt, under 800 characters>
 Parameters: {"mode":"preview","ai_model":"latest"}   plus pose_mode / should_remesh / target_polycount / model_type when they apply
 Texture ideas: <colors, materials and damage moved out of the prompt, for the refine>
 Assumptions: <values you chose that the idea did not give, such as style or proportions>
-Note: <only when needed: "this character should go through Text to Image with pose_mode and Image to 3D so it can be rigged">
+Note: <only when needed: "this character should go through Text to Image with pose_mode and Image to 3D so it can be rigged", or "the cartoon look (or exact part count) is more likely to hold on the image route">
 ```
 
 When the user's idea is a scene or group, say which object you kept. When the user asked for something the preview cannot do (a pose, a color, a specific face count by words), say where it went instead of silently dropping it.
@@ -90,12 +107,16 @@ When the user's idea is a scene or group, say which object you kept. When the us
 | Part misread (braid around the neck, apron as a coat) | Two-word detail read as two things | Reword as one unambiguous noun phrase, or accept and fix at Edit |
 | Arms against the body, hands on hips | Pose words without `pose_mode` | Rig-ready characters: image route. Otherwise set `pose_mode` and accept the arms-out pose |
 | Over 300,000 faces, rigging refuses it | Default `should_remesh: false` | Regenerate with `should_remesh: true, target_polycount: 30000`, or Remesh (5 credits) |
+| Realistic model from a cartoon or toy prompt | The preview did not follow a style word that sets the whole look (0 of 3) | Image route: a Text to Image prompt with the style, then Image to 3D |
+| Bushes, rocks or ground around a building | Ground-level details in the prompt (foundation, flower box) | Drop them and describe only the building |
+| Solid panels where windows should be | "Panels" was read as solid | Call them "openings" |
+| Prop GLB is tens of megabytes | Raw preview at 0.5 to 2.2 million faces | `should_remesh: true` with a `target_polycount`, or Remesh (5 credits) |
 
 ## Resources
 
 | File | Use it when |
 |---|---|
-| [references/evidence.md](references/evidence.md) | You need the test runs behind a rule: prompts, counts, what came out |
+| [references/evidence.md](references/evidence.md) | You need the test runs behind a rule: prompts, counts, what came out, including the six-prop test |
 | [assets/meta-prompt-code.txt](assets/meta-prompt-code.txt) | The user is building an app that turns ideas into preview prompts with a language model; returns one line of JSON |
 | [assets/meta-prompt-plain.txt](assets/meta-prompt-plain.txt) | Same, for a person who will read and paste the result |
 | `scripts/check_prompt.py` | Lint a drafted prompt before handing it over: `python3 scripts/check_prompt.py --kind preview "<prompt>"` |

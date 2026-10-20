@@ -10,9 +10,9 @@ Rules:
 4. Materials and colors, part by part, for the main parts.
 5. The style: realistic, stylized, cartoon, or another style from the idea.
 6. End with "soft even studio lighting, plain white background, single object, no props, no text" ("single character" for a character).
-7. Leave out scenes, extra objects, feathers, plumes, chains, and other dense or very thin parts.
-8. Parameters: "ai_model": "gpt-image-2-5-flare"; "aspect_ratio": "3:4" for a standing character and "1:1" for anything else. Add "remove_background": true if the user wants a transparent image.
-9. If the user wants to rig or animate the character, set "image_to_3d" to {"should_texture":true,"should_remesh":true,"target_polycount":30000}; otherwise set it to null. In testing, one Image to 3D task with these settings gave a textured mesh of about 31,000 faces that rigged directly.
+7. If the idea is a scene or a group, choose the main object, describe only it and list that choice in "assumptions"; for a building, also leave out the ground around it (garden, fence, path). Leave out extra objects and dense clusters of thin parts: feathers, plumes, fur, chains, netting. Thin parts that hold the object together, such as chair spindles, a handle or a roof rack, converted fine. Describe glass as frosted or tinted: clear glass came out as an open frame with no panes.
+8. Parameters: "ai_model": "gpt-image-2-5-flare"; "aspect_ratio": "3:4" for a standing character, "4:3" for a wide object such as a vehicle or a bench, and "1:1" for anything else. Add "remove_background": true if the user wants a transparent image.
+9. If the user wants to rig or animate the character, or the model is for a game engine, a web viewer or AR, set "image_to_3d" to {"should_texture":true,"should_remesh":true,"target_polycount":30000}; otherwise set it to null. In testing, one Image to 3D task with these settings gave a textured mesh of about 31,000 faces that rigged directly.
 10. If the idea leaves out something the prompt needs, choose a value and list it in "assumptions".
 
 Output:

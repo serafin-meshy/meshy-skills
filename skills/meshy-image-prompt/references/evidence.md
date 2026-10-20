@@ -57,6 +57,45 @@ Findings:
 - All four nano-banana requests with `pose_mode` returned 896×1200 (3:4). The GPT Image models returned 1024×1024 with no `aspect_ratio` set; `pose_mode` with `aspect_ratio: "3:4"` on a GPT model was not tried.
 - Without remesh every mesh was 0.99 to 1.35 million faces, over the 300,000-face rigging limit.
 
+## Props (2026-10-20)
+
+Six props. Each prop got a bare image (the same two-to-four words as the Text to 3D bare prompts) and a formula image on `gpt-image-2-5-flare` with `aspect_ratio: "1:1"`, 9 credits each. Each formula image then went through textured Image to 3D on `latest` with `multi_view_thumbnails: true` (30 credits). The meshes were rendered from the front, a raised three-quarter angle, both sides and the back. One sample per arm.
+
+| Prop | Bare image | Formula image | Image to 3D (faces, seconds) |
+|---|---|---|---|
+| Lantern | "an oil lantern": a hurricane lantern with a lit flame | Square brass lantern, nearly front-on; the burner shows through clear glass | Open frame with no panes; the burner was modeled inside; loop handle intact (767,900, 85) |
+| Chair | "a wooden chair": a slat-back chair | Six spindles, curved top rail, stretchers | Every spindle and stretcher, clean (135,948, 59) |
+| Sword | "a sword": diagonal on a dark grey background | Vertical, point down, front-on; most of the 1:1 frame is empty | All parts, textured (47,804, 47) |
+| Plant | "a potted plant": a peace lily in a grey pot | Monstera in a terracotta pot | Split leaves, stems and pot all faithful (976,164, 90) |
+| Cottage | "a small house": a modern house with bushes and a potted plant | Thatched cottage, timber frame, stone chimney | Faithful, thatch included (7,693,740 faces, a 303 MB GLB, 821) |
+| Van | "a cartoon car": a red car with a face | Mint-green van; the cargo box runs off the right edge | Faithful; the hidden end of the cargo box was completed plausibly (1,615,952, 152) |
+
+Follow-up variants:
+
+| Variant | Change | Result |
+|---|---|---|
+| Lantern v2 | "frosted glass panes" instead of "clear glass panes" | Solid panes with the burner's outline painted on them (384,500 faces, 50 s) |
+| Van v2 | `aspect_ratio: "4:3"`, same prompt | The whole van fit in the frame, at a clearer three-quarter angle (image only) |
+| Cottage remesh | Same cottage image, Image to 3D with `should_remesh: true`, `target_polycount: 30000` | 30,028 faces, a 6.6 MB GLB, 195 s, still 30 credits. At viewing size it looks like the 7.7-million-face version, because the thatch is carried by the texture. It is a new generation, so the chimney came out a little different. 812 non-manifold edges, as expected from a triangle remesh |
+
+Formula image prompts (the van's is in SKILL.md):
+
+- Lantern: "A Victorian oil lantern, full object, three-quarter front view, centered with space around it, square frame of aged brass with four clear glass panes, domed brass cap with chimney vents, round carry handle on top, squat brass fuel tank at the base, darker patina in the recesses, realistic style, soft even studio lighting, plain white background, single object, no props, no text"
+- Sword: "A medieval longsword, full object, three-quarter front view, centered with space around it, polished steel double-edged blade with a groove down the center, straight blackened-steel crossguard, grip wrapped in dark brown leather, round brass disc pommel, realistic style, soft even studio lighting, plain white background, single object, no props, no text"
+- Plant: "A potted monstera plant, full object, three-quarter front view, centered with space around it, about eight large split heart-shaped leaves on long stems, glossy deep green leaves, round tapered matte terracotta pot with a thick rim, dark soil, realistic style, soft even studio lighting, plain white background, single object, no props, no text"
+- Cottage: "A small fantasy cottage, full object, three-quarter front view, centered with space around it, whitewashed walls with dark timber beams, steep thatched straw roof, round grey stone chimney, red arched wooden door, two small windows with green shutters, stone foundation, stylized style, soft even studio lighting, plain white background, single object, no props, no text"
+- Chair: in SKILL.md.
+
+Findings:
+
+- The formula removed what the bare prompts added (a lit flame, a face, bushes, a potted plant, a grey background) in 6 of 6.
+- Image to 3D followed all six formula images, including thin structural parts. On Text to 3D the same ideas lost the cartoon style, some proportions and some part counts.
+- The image model did not always draw a three-quarter view: the lantern and the sword came out almost front-on. Both converted cleanly.
+- Clear glass gave no panes; frosted glass gave solid panes.
+- The thatched cottage was the outlier: 7.7 million faces, 303 MB and 821 s. It is one sample, so it does not show whether the thatch or the building caused it. With `should_remesh: true` and 30,000 faces, the same image gave a 6.6 MB model in 195 s that looked the same at viewing size, at the same 30 credits.
+
+
+
 ## Sources
 
 - [Text to Image API](https://docs.meshy.ai/api/text-to-image): `ai_model` required; credits nano-banana 3, nano-banana-2 6, nano-banana-2-lite 3, nano-banana-pro 9, GPT Image models 9; `pose_mode` on the nano-banana models fixes the aspect ratio to 3:4 and a posed `nano-banana` request is generated by `nano-banana-pro` (Pro plan or above), while `nano-banana-2`, `nano-banana-2-lite` and the GPT Image models keep the requested model; `generate_multi_view` and `aspect_ratio` cannot be combined; `image_urls` holds three URLs with multi-view, otherwise one.
