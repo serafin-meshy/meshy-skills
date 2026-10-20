@@ -1,31 +1,31 @@
 # Evidence: Text to 3D preview prompts
 
-Live runs from 2026-10-07 on `POST https://api.meshy.ai/openapi/v2/text-to-3d` with `ai_model: "latest"` (Meshy 7.1) unless noted. Each comparison is one sample per arm unless a count is given, so the results show what a wording controls, not how often it succeeds. Output folders are under `api-testing/meshy_output/` in the author's workspace; task ids are listed so a run can be looked up in the Meshy workspace.
+Live runs from 2026-10-07 on `POST https://api.meshy.ai/openapi/v2/text-to-3d` with `ai_model: "latest"` (Meshy 7.1) unless noted. Each comparison is one sample per arm unless a count is given, so the results show what a wording controls, not how often it succeeds.
 
 ## Formula versus bare prompt (helmet)
 
-| Arm | Prompt | Preview task | Result |
-|---|---|---|---|
-| Bare | "a knight's helmet" | `01a11760-2fb5-752d-ac45-8d3a96aa013b` | Ornate fantasy helmet with carved scrollwork and a pointed crest, none of it requested; 1,255,344 faces |
-| Formula | "A medieval knight's helmet, tall rounded dome with a narrow horizontal eye slit and a pointed hinged visor, riveted cheek guards, raised ridge along the top from front to back, small breathing holes on the visor, realistic proportions, single standalone object" | `01a11760-3730-743f-a9ce-35f9758e601e` | Dome, eye slit, pointed visor, ridge, rivets and breathing slots followed; dented surface and the hinge not produced; 368,016 faces |
+| Arm | Prompt | Result |
+|---|---|---|
+| Bare | "a knight's helmet" | Ornate fantasy helmet with carved scrollwork and a pointed crest, none of it requested; 1,255,344 faces |
+| Formula | "A medieval knight's helmet, tall rounded dome with a narrow horizontal eye slit and a pointed hinged visor, riveted cheek guards, raised ridge along the top from front to back, small breathing holes on the visor, realistic proportions, single standalone object" | Dome, eye slit, pointed visor, ridge, rivets and breathing slots followed; dented surface and the hinge not produced; 368,016 faces |
 
-20 credits each. Folder `ab-test-20261007_111901/`.
+20 credits each.
 
 ## What detailed previews dropped, misread or added
 
-| Prompt asked for | Preview produced | Kind | Task |
-|---|---|---|---|
-| Dented battle-worn surface (helmet) | Smooth surface | Dropped | `01a11760-3730-…` |
-| Pointed hinged visor (helmet) | Pointed visor, no hinge | Dropped | `01a11760-3730-…` |
-| Thick braided beard reaching the belt (dwarf) | Short beard plus a thick braid around the neck that reads as a rope collar | Misread | `01a1179f-ad16-70a8-9cd4-5912a842b5f3` |
-| Same beard wording, second run | Long beard, no braid | Dropped | `01a117a4-d63d-7482-85b4-9c3b60dfb15b` |
-| Knee-length apron split between the legs (dwarf) | Bib over separate trousers, nothing below the belt | Misread | `01a1179f-ad16-…` |
-| Same apron wording, second run | Knee-length belted coat | Misread | `01a117a4-d63d-…` |
-| Oversized head; rolled sleeves (dwarf) | Head in normal proportion; long flared sleeves | Dropped | `01a1179f-ad16-…` |
-| Nothing | Belt pouches | Added | `01a1179f-ad16-…` |
-| Nothing | Fur cuffs on the boots | Added | `01a117a4-d63d-…` |
+| Prompt asked for | Preview produced | Kind |
+|---|---|---|
+| Dented battle-worn surface (helmet) | Smooth surface | Dropped |
+| Pointed hinged visor (helmet) | Pointed visor, no hinge | Dropped |
+| Thick braided beard reaching the belt (dwarf) | Short beard plus a thick braid around the neck that reads as a rope collar | Misread |
+| Same beard wording, second run | Long beard, no braid | Dropped |
+| Knee-length apron split between the legs (dwarf) | Bib over separate trousers, nothing below the belt | Misread |
+| Same apron wording, second run | Knee-length belted coat | Misread |
+| Oversized head; rolled sleeves (dwarf) | Head in normal proportion; long flared sleeves | Dropped |
+| Nothing | Belt pouches | Added |
+| Nothing | Fur cuffs on the boots | Added |
 
-The largest and most common shapes were followed; small surface detail and specific accessories were not. Dwarf prompt: "A stocky dwarf blacksmith, short broad body with an oversized head and large hands, thick braided beard reaching the belt, knee-length apron split between the legs over a belted tunic, rolled sleeves, heavy boots, stylized proportions, single standalone character". Folders `char-test-20261007_122822/` (with `pose_mode: "a-pose"`) and `char-pose-prompt-20261007_123400/` (A-pose written in the prompt, no `pose_mode`).
+The largest and most common shapes were followed; small surface detail and specific accessories were not. Dwarf prompt: "A stocky dwarf blacksmith, short broad body with an oversized head and large hands, thick braided beard reaching the belt, knee-length apron split between the legs over a belted tunic, rolled sleeves, heavy boots, stylized proportions, single standalone character". The first run used `pose_mode: "a-pose"`; the second wrote the A-pose in the prompt with no `pose_mode`.
 
 ## Pose: 18 character previews, no standard A-pose
 
@@ -39,24 +39,24 @@ A standard A-pose means arms straight, angled about 45 degrees down, clear of th
 | `pose_mode: "a-pose"`, `meshy-6` | 1 | 1 | 0 | Arms spread lower, palms up |
 | Comparison: Text to Image with `pose_mode`, then Image to 3D | 3 | 3 | 3 | Standard A-pose |
 
-`pose_mode` is applied (the same pose came back in 11 of 11 runs with it), but on Text to 3D it gives an arms-out, palms-up pose. The A-pose words used: "standing in an A-pose with arms straight and angled down about 45 degrees away from the body, hands open and clear of the body, legs slightly apart". 320 credits for the 16 follow-up previews, folder `pose-rate-20261007_124305/`; first two previews in the folders above.
+`pose_mode` is applied (the same pose came back in 11 of 11 runs with it), but on Text to 3D it gives an arms-out, palms-up pose. The A-pose words used: "standing in an A-pose with arms straight and angled down about 45 degrees away from the body, hands open and clear of the body, legs slightly apart".
 
-One arms-out preview (`01a117ad-25e2-711f-a855-d49c1b4171d9`) was remeshed, retextured and rigged (rigging task `01a117b9-7cea-710c-8fc0-7560a52bdcb1`): 24 joints, clean weights, no forearm or hand vertex weighted to the torso. But the bind pose has the elbows bent 75° against 19 to 29° on image-route rigs, and in Meshy's walking animation the hands do not face naturally. So the Text to 3D pose rigs but is not usable for animated characters. Pose words alone are not usable either: hands on hips and arms at the sides fuse the arms to the torso in the mesh.
+One arms-out preview was remeshed, retextured and rigged: 24 joints, clean weights, no forearm or hand vertex weighted to the torso. But the bind pose has the elbows bent 75° against 19 to 29° on image-route rigs, and in Meshy's walking animation the hands do not face naturally. So the Text to 3D pose rigs but is not usable for animated characters. Pose words alone are not usable either: hands on hips and arms at the sides fuse the arms to the torso in the mesh.
 
 ## Face counts of raw previews
 
-| Preview | Faces (triangles) | Task |
-|---|---|---|
-| Dwarf, A-pose in the prompt | 2,329,628 | `01a117a4-d63d-…` |
-| Dwarf, `pose_mode: "a-pose"` | 1,325,402 | `01a1179f-ad16-…` |
-| Helmet, two-word prompt | 1,255,344 | `01a11760-2fb5-…` |
-| Helmet, detailed prompt | 368,016 | `01a11760-3730-…` |
+| Preview | Faces (triangles) |
+|---|---|
+| Dwarf, A-pose in the prompt | 2,329,628 |
+| Dwarf, `pose_mode: "a-pose"` | 1,325,402 |
+| Helmet, two-word prompt | 1,255,344 |
+| Helmet, detailed prompt | 368,016 |
 
 All four exceed the 300,000-face limit the Rigging API sets for `input_task_id`. Counts were read from the GLB files; the task object does not report them.
 
 ## Remesh at generation
 
-Preview `01a117c5-0b31-7751-ba6a-ddd4a07a5c07` with the dwarf prompt, `pose_mode: "a-pose"`, `should_remesh: true`, `target_polycount: 30000` came out at 31,105 faces. The refine (`01a117c6-2790-762c-b19f-f5b8d8ea70cd`) kept 31,105 and rigging (`01a117c7-c0c9-7785-968a-821350def273`) accepted the refine task directly: 24 joints, no forearm or hand vertex weighted to the torso. 35 credits (20 + 10 + 5) against 40 with a separate Remesh call. At 31,000 faces the mesh is smoother and the beard braids are softer, but the overall form holds. Folder `remesh-gen-20261007_130911/`.
+A preview with the dwarf prompt, `pose_mode: "a-pose"`, `should_remesh: true`, `target_polycount: 30000` came out at 31,105 faces. The refine kept 31,105 and rigging accepted the refine task directly: 24 joints, no forearm or hand vertex weighted to the torso. 35 credits (20 + 10 + 5) against 40 with a separate Remesh call. At 31,000 faces the mesh is smoother and the beard braids are softer, but the overall form holds.
 
 ## Task object gaps
 

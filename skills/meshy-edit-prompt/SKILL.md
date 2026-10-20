@@ -1,6 +1,6 @@
 ---
 name: meshy-edit-prompt
-description: Write the prompt for Meshy Edit, the web app tool that changes one lassoed part of a finished Meshy model (replace a helmet with a head, add a raven to a shoulder, widen a sword, remove a shield). Use this skill whenever the user mentions Meshy Edit, Edit Mode, a lasso or selection on a model, wants to change, swap, add, reshape or remove one part of an existing Meshy model without regenerating it, or asks why an edit landed on the wrong side, changed more than the selected part, damaged something behind it, or ignored "keep everything else the same". It covers the part-and-side formula, what the lasso controls versus the prompt, how Meshy rewrites the prompt internally, the untextured-model precondition and the 20-credit cost. Not for texture or color changes, which Edit cannot make (meshy-texture-prompt), for whole-model prompts (meshy-text-to-3d-prompt, meshy-image-prompt), or for the API, which has no Edit endpoint yet; it writes the prompt and the selection advice, it does not drive the web app.
+description: Write the prompt for Meshy Edit, the web app tool that changes one lassoed part of a finished Meshy model (replace a helmet with a head, add a raven to a shoulder, widen a sword, remove a shield). Use this skill whenever the user mentions Meshy Edit, Edit Mode, a lasso or selection on a model, wants to change, swap, add, reshape or remove one part of an existing Meshy model without regenerating it, or asks why an edit landed on the wrong side, changed more than the selected part, damaged something behind it, or ignored "keep everything else the same". It covers the part-and-side formula, what the lasso controls versus the prompt, how Meshy rewrites the prompt, the untextured-model precondition and the 20-credit cost. Not for texture or color changes, which Edit cannot make (meshy-texture-prompt), for whole-model prompts (meshy-text-to-3d-prompt, meshy-image-prompt), or for the API, which has no Edit endpoint yet; it writes the prompt and the selection advice, it does not drive the web app.
 license: MIT
 metadata:
   author: meshy-dev
@@ -45,7 +45,7 @@ Swaps were the most reliable edit: all six helmet-to-head runs replaced the helm
 
 ## Rules, each with the run behind it
 
-- **Name the part and its side.** With the left shoulder selected, "raven on shoulder" went to the other side both times; "the left shoulder" went to the selected one both times. "it" and an unsided part name are the two words most likely to misfire, because Meshy rewrites your sentence before the model sees it (next section) and the rewrite did not reliably know where the selection was: "make it thicker" was rewritten as "make the whole knight stockier", and only the lasso kept the change on the blade.
+- **Name the part and its side.** With the left shoulder selected, "raven on shoulder" went to the other side both times; "the left shoulder" went to the selected one both times. "it" and an unsided part name are the two words most likely to misfire, because Meshy rewrites your sentence before the edit runs (see "How Meshy reads the prompt" below) and the rewrite did not reliably know where the selection was: "make it thicker" was rewritten as "make the whole knight stockier", and only the lasso kept the change on the blade.
 - **Write the shape details you care about.** The rewrite fills in the rest. "human head" got swept-back hair nobody asked for; "short cropped hair, square jaw" got exactly that.
 - **For a removal, say what is left behind.** "an empty open palm" was the only difference between the two remove prompts, and it decided the hand shape.
 - **Leave out "keep everything else unchanged".** Every rewrite already adds it; two runs with the phrase matched two without.
@@ -54,9 +54,9 @@ Swaps were the most reliable edit: all six helmet-to-head runs replaced the helm
 - **The lasso decides how much changes.** With the same prompt ("the left forearm is bare"), a tight lasso around the shield kept the forearm armor, while a wide lasso around the whole arm stripped the arm's armor and added a hip pouch nobody asked for. Meshy's help article suggests a larger selection when a result looks wrong; expect more of the model to change when you do.
 - **Rotate before you lasso.** The blade sat in front of a leg, the leg was selected too, and both wide-blade runs damaged it.
 
-## How Edit works inside
+## How Meshy reads the prompt
 
-Each edit task stores the camera direction and an `optimizedPrompt`: a language model rewrites your sentence into a long instruction for an image-edit model, written against a render from your camera angle ("viewer's left", pixel coordinates), with "keep everything else unchanged" appended. This is why side words matter (the rewrite reasons about the render, not the mesh), why "it" is risky, and why the keep phrase is redundant. The selection is stored as cells on a 16-unit grid, so a lasso drawn on the same view gives the same selection each time.
+Meshy rewrites your sentence into a longer instruction before the edit runs, based on what the camera currently shows, and the rewrite already asks for everything outside the selection to stay the same. This is why side words matter (left and right can be read from the viewer's side rather than the model's), why "it" is risky, and why "keep everything else unchanged" is redundant. A lasso drawn the same way from the same view selects the same region, so a rerun changes only the result, not the selection.
 
 ## Output format
 
@@ -71,7 +71,7 @@ After: <"retexture with …" when the user wanted a color or material change too
 
 | File | Use it when |
 |---|---|
-| [references/evidence.md](references/evidence.md) | You need the 20 runs: task ids, face counts, per-run results, the generous-lasso and keep-phrase arms, rewrite excerpts |
+| [references/evidence.md](references/evidence.md) | You need the 20 runs: prompts, selections, face counts, per-run results, the generous-lasso and keep-phrase arms, how Meshy read each prompt |
 | `scripts/check_prompt.py` | Lint a drafted prompt: `python3 scripts/check_prompt.py --kind edit "<prompt>"` |
 
 Related skills: `meshy-texture-prompt` for color and material changes, `meshy-text-to-3d-prompt` and `meshy-image-prompt` when the change is big enough to regenerate the model, `meshy-3d-generation` to make the untextured base model through the API.

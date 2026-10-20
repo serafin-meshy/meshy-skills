@@ -11,7 +11,7 @@ metadata:
 
 The Text to 3D preview makes an untextured mesh, so its prompt describes shape and nothing else. Colors, materials and surface damage go into the refine step's `texture_prompt`; pose and face count go into parameters. The field is `prompt`, maximum 800 characters, and Meshy's prompting guide says the earliest words carry the most weight, so the subject comes first.
 
-The rules below were tested live on 2026-10-07 against `ai_model: "latest"` (Meshy 7.1), one or a few samples per comparison. [references/evidence.md](references/evidence.md) has the runs, task ids and what each one showed.
+The rules below were tested live on 2026-10-07 against `ai_model: "latest"` (Meshy 7.1), one or a few samples per comparison. [references/evidence.md](references/evidence.md) has the runs and what each one showed.
 
 ## Workflow
 
@@ -95,7 +95,7 @@ When the user's idea is a scene or group, say which object you kept. When the us
 
 | File | Use it when |
 |---|---|
-| [references/evidence.md](references/evidence.md) | You need the test runs behind a rule: prompts, task ids, counts, what came out |
+| [references/evidence.md](references/evidence.md) | You need the test runs behind a rule: prompts, counts, what came out |
 | [assets/meta-prompt-code.txt](assets/meta-prompt-code.txt) | The user is building an app that turns ideas into preview prompts with a language model; returns one line of JSON |
 | [assets/meta-prompt-plain.txt](assets/meta-prompt-plain.txt) | Same, for a person who will read and paste the result |
 | `scripts/check_prompt.py` | Lint a drafted prompt before handing it over: `python3 scripts/check_prompt.py --kind preview "<prompt>"` |

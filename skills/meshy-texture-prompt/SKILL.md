@@ -11,7 +11,7 @@ metadata:
 
 The mesh does not change during texturing, so the prompt describes surfaces only: one material, color and pattern per visible part, the wear level, and the finish. The same wording goes in `texture_prompt` (Text to 3D refine, Image to 3D) and `text_style_prompt` (Retexture); both are capped at 800 characters. If the user also supplies a style image, the image wins: Retexture prefers `image_style_url` over the text, and Image to 3D prefers `texture_prompt` over `texture_image_url`, so send one or the other.
 
-The rules come from live runs on 2026-10-07 (refines on `latest`, Retexture on a remeshed dwarf, 9 texture tasks in all). [references/evidence.md](references/evidence.md) has the prompts, task ids and what came out.
+The rules come from live runs on 2026-10-07 (refines on `latest`, Retexture on a remeshed dwarf, 9 texture tasks in all). [references/evidence.md](references/evidence.md) has the prompts and what came out.
 
 ## Workflow
 
