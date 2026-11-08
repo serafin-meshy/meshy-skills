@@ -4,7 +4,7 @@ description: Write, review or fix a Meshy texture prompt, the `texture_prompt` o
 license: MIT
 metadata:
   author: meshy-dev
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Meshy texture prompts
@@ -13,13 +13,17 @@ The mesh does not change during texturing, so the prompt describes surfaces only
 
 The rules come from live runs on 2026-10-07 (refines on `latest`, Retexture on a remeshed dwarf, 9 texture tasks in all). [references/evidence.md](references/evidence.md) has the prompts and what came out.
 
+## Which texture model
+
+Meshy paints with one of four texture models, chosen with `texture_model` on Image to 3D (since 2026-11-03) and with `ai_model` on a Text to 3D refine or a Retexture. This skill writes for Meshy 7 (`meshy-7`), the default for Meshy 7.1 and for the Smart Topology models `meshy-t2.5` and `meshy-t2`: it takes the text prompt, makes PBR maps and 2K, 4K or 8K textures. Meshy 6 and Meshy 6 Lite take a prompt and PBR too. Meshy N1 (`meshy-n1`) takes no prompt at all: it paints a 2K base color from the input image or reference images, and `texture_prompt`, `enable_pbr: true`, `4k` and `8k` with it return `400`. When the user wants Meshy N1 (stylized or low-poly game assets, an unlit or toon look, the smallest file), there is no texture prompt to write; say so, and send them to `meshy-image-prompt` for the image that drives the look. The texture model does not change the price: a Smart Topology Image to 3D task is 15 credits textured with any of them at 2K, a refine or Retexture 10. On 2026-11-08 the same 5,000-face Smart Topology prop came with base color, metallic, roughness and normal maps in a 5.9 MB GLB from Meshy 7 with PBR, and with a base color map alone in a 2.7 MB GLB from Meshy N1.
+
 ## Workflow
 
 1. **Find out what the model looks like.** Ask for the mesh's thumbnail or the prompt it was made with, or read the task's `thumbnail_url`. Texture prompts name parts, and a part the mesh does not have cannot be painted; a part you do not name gets whatever the model guesses.
 2. **Write the prompt with the formula**: overall style, then one slot per part in the form "Part: material, color, pattern", then wear, then finish.
 3. **Name hues, not color families.** "Saddle-brown leather" held in 4 of 4 runs; "brown" and "dark brown" drifted to grey-brown, and "dark brown leather with scuffs and small burn marks" came out charcoal. A damage word that implies a color (burn marks, soot, scorching) pulls a generic color toward it but not a specific hue.
 4. **Check it.** Run `python3 scripts/check_prompt.py --kind texture "…"` (path relative to this skill's directory). It flags length, shape and lighting words, generic color words, more than four materials and missing part slots.
-5. **Set `enable_pbr: true`** when the model has metal parts or mixes metal and non-metal, so the metallic and roughness maps separate them. It costs nothing extra. The web app turns PBR on with texturing; the API does not.
+5. **Set `enable_pbr: true`** when the model has metal parts or mixes metal and non-metal, so the metallic and roughness maps separate them. It costs nothing extra. The web app turns PBR on with texturing; the API does not. With Meshy N1 it returns `400`, so switch to `meshy-7` when the user needs PBR.
 6. **Deliver prompt, parameters and assumptions** in the output format at the end.
 
 ## The formula
@@ -51,11 +55,11 @@ The bare prompt "iron helmet" gave plain grey steel with light rust and rivets t
 
 ```
 Prompt: <the texture prompt, under 800 characters>
-Parameters: {"enable_pbr":true}   plus texture_resolution "4k" or "8k" when asked (8k costs 15 credits instead of 10)
+Parameters: {"enable_pbr":true}   plus texture_resolution "4k" or "8k" when asked (8k costs 15 credits instead of 10), and "texture_model":"meshy-7" on Image to 3D when the user has been using another texture model
 Assumptions: <values you chose that the idea did not give, such as a hue or a style>
 ```
 
-For Retexture say which input carries the model (`input_task_id` for a Meshy task, `model_url` for a file) and set `ai_model` only when the user names one. A refine or Retexture at 2K or 4K costs 10 credits.
+For Retexture say which input carries the model (`input_task_id` for a Meshy task, `model_url` for a file) and set `ai_model` only when the user names one; with `meshy-n1` the look comes from `image_style_url` or `multiview_image_urls`, not from a prompt. A refine or Retexture at 2K or 4K costs 10 credits.
 
 ## When the result comes back wrong
 
@@ -64,7 +68,8 @@ For Retexture say which input carries the model (`input_task_id` for a Meshy tas
 | A part is grey or muted instead of the color asked | Generic color word, or a damage word that implies soot or char | Name the hue ("saddle-brown", "oxblood", "slate-blue"); keep damage words off that slot or name the hue beside them |
 | A named part kept the base material | The name matched nothing on the mesh ("top ridge") | Describe its shape and position |
 | Pattern in the wrong place | Placement words are loose | Accept, or move the pattern to a part that is easy to identify |
-| Metal looks like painted plastic | `enable_pbr` off | Retexture with `enable_pbr: true` (10 credits) |
+| Metal looks like painted plastic, or no metallic, roughness or normal map in the output | `enable_pbr` off, or the texture model is Meshy N1, which makes base color only | Retexture with `meshy-7` and `enable_pbr: true` (10 credits), or regenerate the Image to 3D task with `texture_model: "meshy-7"` and `enable_pbr: true` |
+| `400` on a request that carries a texture prompt | The texture model is Meshy N1 (`texture_model` or `ai_model` `meshy-n1`), which takes no prompt | Drop the prompt and let the image drive the look, or switch to `meshy-7` |
 | Result ignores the prompt generally | Too few descriptors | Add material, era, wear and color descriptors, the fix in Meshy's AI Texturing troubleshooting |
 | Seams or smeared regions on an uploaded model | Poor UVs | UV Unwrap (5 credits, GLB up to 40,000 faces), then retexture |
 

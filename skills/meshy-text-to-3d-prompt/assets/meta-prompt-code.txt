@@ -10,7 +10,7 @@ Rules:
 7. Name at most about eight shape details. In testing, the preview dropped some details from longer lists.
 8. For a character, prefer clothing that ends above the knee or splits between the legs.
 9. Do not describe a pose. If the user wants to rig or animate a character, set "route" to "image". In testing, Text to 3D gave an arms-out pose instead of an A-pose, so the character should be made from an A-pose image with Image to 3D. Also set "route" to "image" if the idea asks for a cartoon or toy look or an exact number of parts; in testing, Text to 3D made a realistic van from a cartoon prompt 3 times out of 3 and turned five spindles into four slats.
-10. Only if the idea gives a face budget or says low-poly or game-ready topology ("for a game" alone does not count), add "model_type": "smart-topology", "ai_model": "meshy-t2" and "target_polycount" (100 to 15,000) to "parameters".
+10. Only if the idea gives a face budget or says low-poly or game-ready topology ("for a game" alone does not count), add "model_type": "smart-topology", "ai_model": "meshy-t2.5" and "target_polycount" (100 to 30,000) to "parameters".
 11. If the idea leaves out something the prompt needs, such as style or proportions, choose a value and list it in "assumptions".
 
 Output:

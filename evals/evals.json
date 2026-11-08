@@ -8,7 +8,7 @@
       "expected_output": "A prompt (and parameters) that follows the matching skill's formula; see assertions",
       "assertions": [
         "The preview prompt contains no material, color or damage words (wood, iron, gold, rust, sand color); it describes shape only",
-        "The request body enforces the face budget with parameters: target_polycount at or under 8000 together with either model_type smart-topology plus ai_model meshy-t2, or should_remesh true",
+        "The request body enforces the face budget with parameters: target_polycount at or under 8000 together with either model_type smart-topology plus ai_model meshy-t2.5 (or meshy-t2), or should_remesh true",
         "The answer does not state a wrong prompt character limit (the limit is 800) and does not recommend the deprecated model_type lowpoly",
         "The answer reduces the beach scene to one object (the chest with its coins) and says so explicitly",
         "Rust, gold and sand are moved to texture ideas for the refine step rather than dropped silently",
@@ -23,10 +23,10 @@
       "expected_output": "A prompt (and parameters) that follows the matching skill's formula; see assertions",
       "assertions": [
         "The pipeline is Text to Image with pose_mode a-pose, then Image to 3D, then Rigging; the character is not generated with a Text to 3D preview",
-        "The Image to 3D request sets should_texture true, should_remesh true and a target_polycount at or under 300000 (30000 recommended), and the answer names the 300,000-face rigging limit",
+        "The Image to 3D request uses Smart Topology (model_type smart-topology, ai_model meshy-t2.5) with a target_polycount at or under 30000, textured (texture_model meshy-7 with enable_pbr true, or the default texture) and pose_mode a-pose; if it offers the standard model instead it sets should_remesh true with a target_polycount, and the answer names Rigging's 380,000-triangle limit",
         "The Rigging request uses the Image to 3D (textured) task id as input_task_id",
         "The image prompt includes full body, front view, centered, even studio lighting, plain white background, single character, no props, no text, and contains no pose words that conflict with pose_mode",
-        "Credit costs are given per step (9 + 30 + 5 = 44) or as a total",
+        "Credit costs are given per step (9 + 15 + 5 = 29) or as a total",
         "The answer warns that a long cape or long clothing is weighted to the legs or otherwise addresses the cape for rigging"
       ],
       "files": []

@@ -52,7 +52,7 @@ One arms-out preview was remeshed, retextured and rigged: 24 joints, clean weigh
 | Helmet, two-word prompt | 1,255,344 |
 | Helmet, detailed prompt | 368,016 |
 
-All four exceed the 300,000-face limit the Rigging API sets for `input_task_id`. Counts were read from the GLB files; the task object does not report them.
+All four exceed the 380,000-triangle limit the Rigging API sets. Counts were read from the GLB files; the task object does not report them.
 
 ## Remesh at generation
 
@@ -108,7 +108,7 @@ The preview task object returns `consumed_credits`, `created_at`, `finished_at`,
 
 ## Sources
 
-- [Text to 3D API](https://docs.meshy.ai/api/text-to-3d): `prompt` and `texture_prompt` max 800 characters; `target_polycount` 100 to 300,000 with `should_remesh` (default 30,000) and 100 to 15,000 with `smart-topology` (default 4,000); `pose_mode` values `a-pose` and `t-pose`; `lowpoly` retires 2026-10-30.
+- [Text to 3D API](https://docs.meshy.ai/api/text-to-3d): `prompt` and `texture_prompt` max 800 characters; `target_polycount` 100 to 300,000 with `should_remesh` (default 30,000), 100 to 30,000 on `meshy-t2.5` (default 15,000) and 100 to 15,000 on `meshy-t2` (default 4,000); `model_type: "smart-topology"` defaults to `meshy-t2.5` and makes triangles only; `pose_mode` values `a-pose` and `t-pose`; `lowpoly` retires 2026-11-30.
 - [Prompting Best Practices](https://docs.meshy.ai/webapp/guides/prompting): "key information placed first carries the highest weight"; "stone and wood and metal and glass" listed as a bad prompt.
-- [Rigging API](https://docs.meshy.ai/api/rigging): 300,000-face limit for `input_task_id`; textured humanoid models only.
+- [Rigging API](https://docs.meshy.ai/api/rigging): at most 380,000 triangles (a quad counts as two), remesh to 300,000 or less first; textured humanoid models only.
 - [Pricing](https://docs.meshy.ai/api/pricing).

@@ -4,7 +4,7 @@ description: Write, review or fix the `prompt` for a Meshy Text to 3D preview ta
 license: MIT
 metadata:
   author: meshy-dev
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Meshy Text to 3D preview prompts
@@ -70,19 +70,19 @@ Six props were tested on 2026-10-20: a lantern, a chair, a longsword, a potted p
   When these matter, use the image route (`meshy-image-prompt`). The design shows up in a 9-credit image and can be fixed before any 3D is paid for.
 - **Openings:** "window panels" gave solid panels; "window openings" cut through them. If a part should be a hole, call it an opening.
 - **Parts that sit on top of each other:** listing them bottom to top ("fuel tank as the base, square body above it") got rid of a pedestal the first wording produced, but the tank still came out as a flat square plinth, not a cylinder. The order fixed where the parts went, not their shapes.
-- **Face counts:** raw prop previews ran from 47,142 faces (sword) to 2,174,244 (cottage, a 52 MB GLB), and 8 of the 10 formula previews were over 300,000. For a game engine, a web viewer or AR, set `should_remesh: true` and a `target_polycount` (next section).
+- **Face counts:** raw prop previews ran from 47,142 faces (sword) to 2,174,244 (cottage, a 52 MB GLB), and 8 of the 10 formula previews were over 300,000. For a game engine, a web viewer or AR, set `should_remesh: true` and a `target_polycount`, or generate on Smart Topology (next section).
 
 ## Set these with parameters, not words
 
 | Want | Parameter | Notes |
 |---|---|---|
 | A-pose or T-pose | `pose_mode: "a-pose"` or `"t-pose"` | Applied consistently, but on Text to 3D the result is arms-out, palms-up, not a standard A-pose. Rig-ready characters take the image route. |
-| A face budget on a standard model, or a prop for a game engine, web viewer or AR | `should_remesh: true`, `target_polycount: N` (100 to 300,000, default 30,000) | Default `should_remesh` is false on Meshy 6 and 7, which left character previews at 368,000 to 2.3 million faces (above the rigging limit of 300,000) and prop previews at 47,000 to 2.2 million. A preview at 30,000 kept its count through refine and rigged directly. |
-| Clean game-ready topology at a set count | `model_type: "smart-topology"`, `ai_model: "meshy-t2"`, `target_polycount: N` (100 to 15,000, default 4,000) | A different generator, not a cleanup pass: softer detail, separate open parts. 5 credits instead of 20. Only when the user asks for low-poly, game-ready topology or gives a face budget; "for a game" alone is not a request for it. |
-| Quad topology | `topology: "quad"` with `should_remesh: true` | Not available with `meshy-t2`. |
+| A face budget on a standard model, or a prop for a game engine, web viewer or AR | `should_remesh: true`, `target_polycount: N` (100 to 300,000, default 30,000) | Default `should_remesh` is false on Meshy 6 and 7, which left character previews at 368,000 to 2.3 million faces (above Rigging's limit of 380,000 triangles) and prop previews at 47,000 to 2.2 million. A preview at 30,000 kept its count through refine and rigged directly. |
+| Clean game-ready topology at a set count | `model_type: "smart-topology"`, `ai_model: "meshy-t2.5"` (100 to 30,000 faces, default 15,000) or `"meshy-t2"` (100 to 15,000, default 4,000), `target_polycount: N` | A different generator, not a cleanup pass: the mesh is generated at the count you set, triangles only, with softer detail and separate open parts, and `should_remesh` is ignored. `meshy-t2.5` is the default when `ai_model` is left out and has the sharper detail; `meshy-t2` is faster and keeps parts separate. 5 credits instead of 20. Use it for game assets and whenever the user gives a face budget, as Meshy's model guide does for game characters and props; keep a standard model for an asset that needs Meshy 7.1's dense detail, such as a hero render or a 3D print. A character to rig still goes through the image route, where Smart Topology with `pose_mode` rigged cleanly (2026-11-08). |
+| Quad topology | `topology: "quad"` with `should_remesh: true` | Not available on Smart Topology (`meshy-t2.5`, `meshy-t2`), which makes triangles only; `quad` with them returns `400`. |
 | Metal that reads as metal | `enable_pbr: true` on the refine | A refine setting, but decide it now so the texture prompt can rely on it. |
 
-Credits: a preview is 20 on `latest` (Meshy 7.1) and `meshy-6`, 5 on `meshy-6-lite` and `meshy-t2`; the refine is 10 more. The task object does not echo `ai_model`, `pose_mode` or a face count, so record the request body yourself if you need to verify a run later.
+Credits: a preview is 20 on `latest` (Meshy 7.1) and `meshy-6`, 5 on `meshy-6-lite`, `meshy-t2` and `meshy-t2.5`; the refine is 10 more. The task object does not echo `ai_model`, `pose_mode` or a face count, so record the request body yourself if you need to verify a run later.
 
 ## Output format
 
@@ -106,7 +106,7 @@ When the user's idea is a scene or group, say which object you kept. When the us
 | A named detail is missing | Too many details, or the detail is surface-level (dents, hinge) | Cut the list to the eight that matter, move surface detail to the texture prompt, regenerate (same 20 credits) |
 | Part misread (braid around the neck, apron as a coat) | Two-word detail read as two things | Reword as one unambiguous noun phrase, or accept and fix at Edit |
 | Arms against the body, hands on hips | Pose words without `pose_mode` | Rig-ready characters: image route. Otherwise set `pose_mode` and accept the arms-out pose |
-| Over 300,000 faces, rigging refuses it | Default `should_remesh: false` | Regenerate with `should_remesh: true, target_polycount: 30000`, or Remesh (5 credits) |
+| Over 380,000 triangles, rigging refuses it (`400`) | Default `should_remesh: false` | Regenerate with `should_remesh: true, target_polycount: 30000`, or Remesh to 300,000 or less (5 credits). A character you will animate belongs on the image route with Smart Topology (`meshy-image-prompt`) |
 | Realistic model from a cartoon or toy prompt | The preview did not follow a style word that sets the whole look (0 of 3) | Image route: a Text to Image prompt with the style, then Image to 3D |
 | Bushes, rocks or ground around a building | Ground-level details in the prompt (foundation, flower box) | Drop them and describe only the building |
 | Solid panels where windows should be | "Panels" was read as solid | Call them "openings" |

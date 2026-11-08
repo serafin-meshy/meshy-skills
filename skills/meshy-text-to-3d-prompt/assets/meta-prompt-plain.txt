@@ -10,7 +10,7 @@ Rules:
 7. Name at most about eight shape details. In testing, the preview dropped some details from longer lists.
 8. For a character, prefer clothing that ends above the knee or splits between the legs.
 9. Do not describe a pose. If the user wants to rig or animate a character, write on the Note line: "To rig or animate this character, make an A-pose image and use Image to 3D instead. In testing, Text to 3D gave an arms-out pose instead of an A-pose." If the idea asks for a cartoon or toy look or an exact number of parts, write on the Note line: "For this look, make an image with Text to Image and use Image to 3D. In testing, Text to 3D made a realistic van from a cartoon prompt and changed part counts."
-10. Only if the idea gives a face budget or says low-poly or game-ready topology ("for a game" alone does not count), put "Smart Topology (Meshy T2), target face count N" (100 to 15,000) on the Settings line.
+10. Only if the idea gives a face budget or says low-poly or game-ready topology ("for a game" alone does not count), put "Smart Topology (Meshy T2.5), target face count N" (100 to 30,000) on the Settings line.
 11. Keep the prompt under 800 characters.
 12. If the idea leaves out something the prompt needs, such as style or proportions, choose a value and put it on the Assumptions line.
 
