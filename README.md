@@ -25,7 +25,7 @@ Two rules apply everywhere: put the subject first (Meshy's prompting guide says 
 - **Python 3** runs the optional prompt checker in each skill. Nothing else is required to use the skills.
 - **A Meshy account** to run the prompts. Edit is available in the web app only.
 - **Plans:** `nano-banana-pro` needs a Pro plan or above. The skills default to `gpt-image-2-5-flare`, which works on every plan at the same 9 credits and followed the image formula most closely in testing.
-- **Credits:** each skill states what its tasks cost. A rig-ready character, for example, is three tasks and 44 credits.
+- **Credits:** each skill states what its tasks cost. A rig-ready character, for example, is three tasks and 29 credits: an A-pose image (9), a textured Smart Topology model (15) and the rig (5).
 
 ## What each skill contains
 
@@ -37,7 +37,7 @@ Two rules apply everywhere: put the subject first (Meshy's prompting guide says 
 ## What the tests found
 
 - A short prompt lets the model design for you: "a knight's helmet" came back with scrollwork and a crest; the formula prompt came back with the dome, eye slit, visor, ridge, rivets and breathing holes that were asked for.
-- Text to 3D produced no standard A-pose in 18 character previews, with or without `pose_mode`. Text to Image with `pose_mode: "a-pose"`, then Image to 3D, produced one in 3 of 3, and those rigs were clean.
+- Text to 3D produced no standard A-pose in 18 character previews, with or without `pose_mode`. Text to Image with `pose_mode: "a-pose"`, then Image to 3D, produced one in 3 of 3, and those rigs were clean. On 2026-11-08 the same image rigged just as cleanly from a Smart Topology model (`meshy-t2.5`, 30,000 faces, Meshy 7 texture with PBR) at half the model price, half the time and with no non-manifold edges, so that is now the recommended route.
 - Texture colors need a specific hue, not a color family: "saddle-brown leather" held in 4 of 4 runs; "brown" and "dark brown" drifted to grey, and "small burn marks" turned "dark brown" charcoal.
 - Meshy Edit rewrites your sentence based on what the camera shows, so with the left shoulder selected, "raven on shoulder" put the raven on the other shoulder in 2 of 2 runs, while "the left shoulder" put it on the selected one in 2 of 2. The lasso, not the prompt, sets how much of the model changes.
 
@@ -55,6 +55,6 @@ Or copy any `skills/<name>` directory into `.claude/skills/` (Claude Code), `.cu
 
 ## Sources
 
-The tests ran on 2026-10-07 (Text to 3D, Text to Image, texturing and rigging), 2026-10-14 (Meshy Edit) and 2026-10-16 (six more image models). The skills were checked against the Meshy API docs ([Text to 3D](https://docs.meshy.ai/api/text-to-3d), [Text to Image](https://docs.meshy.ai/api/text-to-image), [Image to 3D](https://docs.meshy.ai/api/image-to-3d), [Retexture](https://docs.meshy.ai/api/retexture), [Rigging](https://docs.meshy.ai/api/rigging), [Pricing](https://docs.meshy.ai/api/pricing)) and the [Prompting Best Practices](https://docs.meshy.ai/webapp/guides/prompting) guide.
+The tests ran on 2026-10-07 (Text to 3D, Text to Image, texturing and rigging), 2026-10-14 (Meshy Edit), 2026-10-16 (six more image models), 2026-10-20 (six props) and 2026-11-08 (the rig-ready pipeline on Smart Topology, texture models, props and a quadruped). The skills were checked against the Meshy API docs ([Text to 3D](https://docs.meshy.ai/api/text-to-3d), [Text to Image](https://docs.meshy.ai/api/text-to-image), [Image to 3D](https://docs.meshy.ai/api/image-to-3d), [Models](https://docs.meshy.ai/api/models), [Retexture](https://docs.meshy.ai/api/retexture), [Rigging](https://docs.meshy.ai/api/rigging), [Pricing](https://docs.meshy.ai/api/pricing)) on 2026-11-08 and the [Prompting Best Practices](https://docs.meshy.ai/webapp/guides/prompting) guide.
 
 Contributing: see [CONTRIBUTING.md](CONTRIBUTING.md).

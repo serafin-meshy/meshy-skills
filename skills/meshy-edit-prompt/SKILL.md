@@ -4,7 +4,7 @@ description: Write the prompt for Meshy Edit, the web app tool that changes one 
 license: MIT
 metadata:
   author: meshy-dev
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Meshy Edit prompts

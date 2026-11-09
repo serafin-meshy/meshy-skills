@@ -137,7 +137,7 @@ def check_preview(text: str, r: Report) -> None:
                "set pose_mode for a statue, or use the image route for a rig-ready character")
     if re.search(r"low[- ]?poly", low):
         r.warn("'low-poly' changes the look, not the count; set target_polycount "
-               "(with should_remesh, or model_type smart-topology + ai_model meshy-t2)")
+               "(with should_remesh, or model_type smart-topology + ai_model meshy-t2.5)")
     if re.search(r"\b\d[\d,]*\s*(faces|polys|polygons|tris|triangles)\b", low):
         r.warn("a face count in words is ignored; set target_polycount instead")
     if hits := found(text, LIGHTING + ["background"]):

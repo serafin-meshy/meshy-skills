@@ -45,6 +45,7 @@ Generic color words drifted toward grey, and "small burn marks" pushed "dark bro
 
 - [Text to 3D API](https://docs.meshy.ai/api/text-to-3d): refine `texture_prompt` max 800 characters; `enable_pbr` default false; `texture_image_url` loses to `texture_prompt` when both are set.
 - [Image to 3D API](https://docs.meshy.ai/api/image-to-3d): `texture_prompt` max 800 characters; `texture_prompt` wins over `texture_image_url`.
+- [Image to 3D API](https://docs.meshy.ai/api/image-to-3d) and [Models](https://docs.meshy.ai/api/models): `texture_model` (`meshy-7`, `meshy-n1`, `meshy-6-lite`) picks the texture model in the same task with any `ai_model` at no change in price; `meshy-7` is the default for `meshy-7.1`, `meshy-t2.5` and `meshy-t2`; `meshy-n1` paints a 2K base color from images only and returns `400` for `texture_prompt`, `enable_pbr: true`, `4k` and `8k`.
 - [Retexture API](https://docs.meshy.ai/api/retexture): `text_style_prompt` max 800 characters; `image_style_url` wins over `text_style_prompt`; `multiview_image_urls` needs `ai_model: "meshy-7"`; `enable_pbr` default false; 8K costs 15 credits.
 - [Prompting Best Practices](https://docs.meshy.ai/webapp/guides/prompting): "stone and wood and metal and glass" listed as too many materials.
 - [AI Texturing guide](https://docs.meshy.ai/webapp/guides/3d-model/ai-texturing): troubleshooting advice to add material, era, wear and color descriptors.
